@@ -54,10 +54,10 @@ st.set_page_config(page_title="DataSense AutoMLSS", layout="wide")
 load_css()
 init_db()
 
-import os
+import streamlit as st
 
-ADMIN_EMAIL = os.getenv("ss21@gmail.com")
-ADMIN_PASSWORD = os.getenv("kd21admin")
+ADMIN_EMAIL = st.secrets["ADMIN_EMAIL"]
+ADMIN_PASSWORD = st.secrets["ADMIN_PASSWORD"]
 
 try:
     create_user(
