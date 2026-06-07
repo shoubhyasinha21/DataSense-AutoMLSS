@@ -744,8 +744,6 @@ if len(numeric_columns) > 0:
         )
 
     show_chart(fig)
-
-
 if len(numeric_columns) >= 2:
     st.subheader("Relationship Between Numeric Features")
 
@@ -777,9 +775,11 @@ if len(numeric_columns) >= 2:
         key="relationship_chart_type"
     )
 
+    clean_df = df[[x_feature, y_feature]].dropna()
+
     if relation_chart == "Scatter Plot":
         fig = px.scatter(
-            df,
+            clean_df,
             x=x_feature,
             y=y_feature,
             title=f"{x_feature} vs {y_feature}",
@@ -792,8 +792,10 @@ if len(numeric_columns) >= 2:
             key="bubble_size_feature"
         )
 
+        clean_df = df[[x_feature, y_feature, size_feature]].dropna()
+
         fig = px.scatter(
-            df,
+            clean_df,
             x=x_feature,
             y=y_feature,
             size=size_feature,
@@ -801,23 +803,38 @@ if len(numeric_columns) >= 2:
         )
 
     elif relation_chart == "Trendline Scatter":
-        fig = px.scatter(
-            df,
-            x=x_feature,
-            y=y_feature,
-            trendline="ols",
-            title=f"{x_feature} vs {y_feature} With Trendline",
-        )
+        try:
+            fig = px.scatter(
+                clean_df,
+                x=x_feature,
+                y=y_feature,
+                trendline="ols",
+                title=f"{x_feature} vs {y_feature} With Trendline",
+            )
+        except Exception as e:
+            st.warning(f"Trendline failed: {e}")
+            fig = px.scatter(
+                clean_df,
+                x=x_feature,
+                y=y_feature,
+                title=f"{x_feature} vs {y_feature}",
+            )
 
     else:
         fig = px.density_heatmap(
-            df,
+            clean_df,
             x=x_feature,
             y=y_feature,
             title=f"2D Density Heatmap: {x_feature} vs {y_feature}",
         )
 
     show_chart(fig)
+
+else:
+    st.warning("At least 2 numeric columns are required for relationship visualizations.")
+
+
+
 
 
 if len(numeric_columns) >= 2:
