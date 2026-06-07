@@ -10,3 +10,4 @@ openpyxl
 xlsxwriter
 fpdf2
 reportlab
+statsmodels
