@@ -744,13 +744,13 @@ if len(numeric_columns) > 0:
         )
 
     show_chart(fig)
-if len(numeric_columns) >= 2:
-    st.subheader("Relationship Between Numeric Features")
+    if len(numeric_columns) >= 2:
+        st.subheader("Relationship Between Numeric Features")
 
-    col_x, col_y = st.columns(2)
+        col_x, col_y = st.columns(2)
 
-    with col_x:
-        x_feature = st.selectbox(
+        with col_x:
+           x_feature = st.selectbox(
             "Select X feature",
             numeric_columns,
             key="scatter_x_feature"
@@ -778,6 +778,7 @@ if len(numeric_columns) >= 2:
     clean_df = df[[x_feature, y_feature]].dropna()
 
     if relation_chart == "Scatter Plot":
+
         fig = px.scatter(
             clean_df,
             x=x_feature,
@@ -786,23 +787,41 @@ if len(numeric_columns) >= 2:
         )
 
     elif relation_chart == "Bubble Plot":
-        size_feature = st.selectbox(
-            "Select bubble size feature",
-            numeric_columns,
-            key="bubble_size_feature"
-        )
 
-        clean_df = df[[x_feature, y_feature, size_feature]].dropna()
+        bubble_features = [
+            col for col in numeric_columns
+            if col not in [x_feature, y_feature]
+        ]
 
-        fig = px.scatter(
-            clean_df,
-            x=x_feature,
-            y=y_feature,
-            size=size_feature,
-            title=f"{x_feature} vs {y_feature} Bubble Plot",
-        )
+        if len(bubble_features) == 0:
+            st.warning("No additional numeric column available for bubble size.")
+            fig = None
+
+        else:
+            size_feature = st.selectbox(
+                "Select bubble size feature",
+                bubble_features,
+                key="bubble_size_feature"
+            )
+
+            clean_df = df[
+                [x_feature, y_feature, size_feature]
+            ].dropna()
+
+            clean_df = clean_df.loc[
+                :, ~clean_df.columns.duplicated()
+            ]
+
+            fig = px.scatter(
+                clean_df,
+                x=x_feature,
+                y=y_feature,
+                size=size_feature,
+                title=f"{x_feature} vs {y_feature} Bubble Plot",
+            )
 
     elif relation_chart == "Trendline Scatter":
+
         try:
             fig = px.scatter(
                 clean_df,
@@ -811,8 +830,10 @@ if len(numeric_columns) >= 2:
                 trendline="ols",
                 title=f"{x_feature} vs {y_feature} With Trendline",
             )
+
         except Exception as e:
             st.warning(f"Trendline failed: {e}")
+
             fig = px.scatter(
                 clean_df,
                 x=x_feature,
@@ -821,6 +842,7 @@ if len(numeric_columns) >= 2:
             )
 
     else:
+
         fig = px.density_heatmap(
             clean_df,
             x=x_feature,
@@ -828,14 +850,11 @@ if len(numeric_columns) >= 2:
             title=f"2D Density Heatmap: {x_feature} vs {y_feature}",
         )
 
-    show_chart(fig)
+    if fig is not None:
+        show_chart(fig)
 
 else:
     st.warning("At least 2 numeric columns are required for relationship visualizations.")
-
-
-
-
 
 if len(numeric_columns) >= 2:
     st.subheader("Correlation Heatmap")
