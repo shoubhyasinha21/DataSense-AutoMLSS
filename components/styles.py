@@ -168,26 +168,44 @@ section[data-testid="stSidebar"] * {
     padding: 14px;
     border-radius: 16px;
 }
-                [data-testid="stFileUploaderDropzone"] {
-    background: #ffffff !important;
-    color: #111827 !important;
+                /* File uploader */
+[data-testid="stFileUploader"] label {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+                
+}
+                
+[data-testid="stFileUploaderDropzone"] {
+    background: linear-gradient(135deg, #1e1b4b, #312e81) !important;
+    border: 2px dashed #a855f7 !important;
+    border-radius: 22px !important;
+    color: #ffffff !important;
 }
 
 [data-testid="stFileUploaderDropzone"] * {
-    color: #111827 !important;
-    font-weight: 600 !important;
+    color: #ffffff !important;
 }
 
-[data-testid="stFileUploader"] label {
-    color: #111827 !important;
-    font-weight: 800 !important;
+[data-testid="stFileUploaderDropzone"] small {
+    color: #ffffff !important;
+}
+
+/* Purple browse button */
+.stFileUploader button,
+[data-testid="stBaseButton-secondary"] {
+    background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 8px 25px rgba(124,58,237,0.35) !important;
 }
                 /* Force Purple Browse Button */
 
 .stFileUploader button,
 [data-testid="stBaseButton-secondary"] {
     background: linear-gradient(135deg, #7c3aed, #a855f7) !important;
-    color: white !important;
+    color: #ffffff !important;
     border: none !important;
     border-radius: 14px !important;
     font-weight: 700 !important;
