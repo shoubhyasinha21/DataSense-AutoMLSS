@@ -3,11 +3,16 @@ from datetime import datetime, timedelta
 
 from utils.database import create_user, login_user
 
-
 SESSION_TIMEOUT_MINUTES = 60
 
 
 def check_session_timeout():
+    if "logged_in" not in st.session_state:
+        st.session_state["logged_in"] = False
+
+    if not st.session_state["logged_in"]:
+        return
+
     if "last_activity" not in st.session_state:
         st.session_state["last_activity"] = datetime.now()
         return
@@ -53,10 +58,14 @@ def render_auth_suite():
     with tab1:
         st.subheader("Login")
 
-        email = st.text_input("Email", key="login_email")
+        email = st.text_input("Email", key="login_email").strip().lower()
         password = st.text_input("Password", type="password", key="login_password")
 
-        if st.button("Login", use_container_width=True, key="login_button"):
+        if st.button("Login", width="stretch", key="login_button"):
+            if not email or not password:
+                st.error("Please enter email and password.")
+                return
+
             user = login_user(email, password)
 
             if user:
@@ -73,19 +82,27 @@ def render_auth_suite():
                 st.success("Login successful!")
                 st.rerun()
             else:
-                st.error("Invalid email or password")
+                st.error("Invalid email or password.")
 
     with tab2:
         st.subheader("Create Account")
 
-        name = st.text_input("Full Name", key="signup_name")
-        email = st.text_input("Email", key="signup_email")
+        name = st.text_input("Full Name", key="signup_name").strip()
+        email = st.text_input("Email", key="signup_email").strip().lower()
         password = st.text_input("Password", type="password", key="signup_password")
-        confirm_password = st.text_input("Confirm Password", type="password", key="signup_confirm_password")
+        confirm_password = st.text_input(
+            "Confirm Password",
+            type="password",
+            key="signup_confirm_password"
+        )
 
-        if st.button("Create Account", use_container_width=True, key="signup_button"):
+        if st.button("Create Account", width="stretch", key="signup_button"):
             if not name or not email or not password:
                 st.error("Please fill all fields.")
+                return
+
+            if len(password) < 6:
+                st.error("Password must be at least 6 characters.")
                 return
 
             if password != confirm_password:
